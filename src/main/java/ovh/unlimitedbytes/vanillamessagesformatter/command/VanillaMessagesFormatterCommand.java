@@ -1,6 +1,8 @@
 package ovh.unlimitedbytes.vanillamessagesformatter.command;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -8,6 +10,7 @@ import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ovh.unlimitedbytes.vanillamessagesformatter.VanillaMessagesFormatter;
+import ovh.unlimitedbytes.vanillamessagesformatter.config.SettingsConfig;
 
 import java.util.List;
 
@@ -20,7 +23,13 @@ public class VanillaMessagesFormatterCommand implements CommandExecutor, TabComp
         @NotNull String[] args
     ) {
         if (args.length == 0) {
-            commandSender.sendMessage(Component.translatable("commands.vanillamessagesformatter.info.success"));
+            String message = "VanillaMessagesFormatter v" +
+                             VanillaMessagesFormatter.getInstance().getDescription().getVersion()
+                             +
+                             "\n"
+                             +
+                             "Usage: /vanillamessagesformatter [reload]";
+            this.sendMessage("info", commandSender, message);
             return true;
         }
 
@@ -28,7 +37,7 @@ public class VanillaMessagesFormatterCommand implements CommandExecutor, TabComp
             try {
                 VanillaMessagesFormatter.getInstance().reload();
             } catch (Exception exception) {
-                commandSender.sendMessage(Component.translatable("commands.vanillamessagesformatter.reload.error"));
+                this.sendMessage("error", commandSender, "Failed to reload the configuration.");
                 VanillaMessagesFormatter.getInstance().getLogger().log(
                     java.util.logging.Level.SEVERE,
                     "Failed to reload the plugin.",
@@ -37,35 +46,11 @@ public class VanillaMessagesFormatterCommand implements CommandExecutor, TabComp
                 return true;
             }
 
-            commandSender.sendMessage(Component.translatable("commands.vanillamessagesformatter.reload.success"));
+            this.sendMessage("success", commandSender, "Configuration reloaded.");
             return true;
         }
 
-        if (args[0].equals("mapping")) {
-            if (args.length == 2) {
-                String mapping = VanillaMessagesFormatter.getInstance().getSettingsConfig().getMapping(args[1]);
-
-                if (mapping == null) {
-                    commandSender.sendMessage(Component.translatable(
-                        "commands.vanillamessagesformatter.mapping.not_found",
-                        Component.text(args[1])
-                    ));
-                    return true;
-                }
-
-                commandSender.sendMessage(Component.translatable(
-                    "commands.vanillamessagesformatter.mapping.success",
-                    Component.text(args[1]),
-                    Component.text(mapping)
-                ));
-                return true;
-            }
-
-            commandSender.sendMessage(Component.translatable("commands.vanillamessagesformatter.mapping.usage"));
-            return true;
-        }
-
-        commandSender.sendMessage(Component.translatable("commands.vanillamessagesformatter.usage"));
+        this.sendMessage("warning", commandSender, "Unknown command.");
         return true;
     }
 
@@ -77,13 +62,26 @@ public class VanillaMessagesFormatterCommand implements CommandExecutor, TabComp
         @NotNull String[] args
     ) {
         if (args.length == 1) {
-            return List.of("reload", "mapping");
-        }
-
-        if (args.length == 2 && args[0].equals("mapping")) {
-            return VanillaMessagesFormatter.getInstance().getSettingsConfig().getMappingsKeys();
+            return List.of("reload");
         }
 
         return List.of();
+    }
+
+    private void sendMessage(
+        @NotNull String formatKey,
+        @NotNull CommandSender commandSender,
+        @NotNull String message
+    ) {
+        SettingsConfig.Format format = VanillaMessagesFormatter.getInstance().getSettingsConfig().getFormat(formatKey);
+        Component prefix = MiniMessage.miniMessage().deserialize(format.prefix());
+        Component suffix = MiniMessage.miniMessage().deserialize(format.suffix());
+
+        commandSender.sendMessage(
+            prefix
+                .append(MiniMessage.miniMessage().deserialize(message))
+                .append(suffix)
+                .colorIfAbsent(TextColor.color(format.primaryColor()))
+        );
     }
 }

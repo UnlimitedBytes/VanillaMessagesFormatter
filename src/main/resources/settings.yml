@@ -11,6 +11,11 @@
 # Please see the LICENSE file for more details.
 # __________________________________________________________________________________________________________
 
+# Experimental feature to use the GlobalTranslator to translate messages into the correct format.
+# This can replace the messages format in the console and in the chat. However, this feature is still in
+# development and may not work as expected.
+useTranslator: false
+
 formats:
     info:
         prefix: "<#D3D3D3>❔</#D3D3D3> "
@@ -34,16 +39,6 @@ formats:
         secondaryColor: "#ffb74d"
 
 mappings:
-    # PLUGIN MESSAGES
-    -   commands.vanillamessagesformatter.usage: "warning"
-    -   commands.vanillamessagesformatter.mapping.usage: "warning"
-    -   commands.vanillamessagesformatter.info.success: "info"
-    -   commands.vanillamessagesformatter.reload.error: "error"
-    -   commands.vanillamessagesformatter.reload.success: "success"
-    -   commands.vanillamessagesformatter.mapping.success: "success"
-    -   commands.vanillamessagesformatter.mapping.not_found: "error"
-
-    # VANILLA MESSAGES
     -   "commands.advancement.grant.criterion.to.many.success": "success"
     -   "commands.advancement.grant.criterion.to.one.success": "success"
     -   "commands.advancement.grant.many.to.many.success": "success"

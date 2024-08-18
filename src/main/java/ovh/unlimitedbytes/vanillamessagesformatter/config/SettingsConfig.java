@@ -16,6 +16,7 @@ import java.util.Objects;
 public class SettingsConfig extends Config {
     private final HashMap<@NotNull String, @NotNull Format> formats = new HashMap<>();
     private final HashMap<@NotNull String, @NotNull String> mappings = new HashMap<>();
+    private boolean useTranslator = false;
 
     public record Format(
         String prefix,
@@ -36,6 +37,14 @@ public class SettingsConfig extends Config {
     }
 
     private void loadFormatMessages() {
+        if(!config.contains("useTranslator")) {
+            VanillaMessagesFormatter.getInstance().getLogger().warning(
+                "useTranslator not found in the settings.yml file. Falling back to default value (false)."
+            );
+        } else {
+            useTranslator = config.getBoolean("useTranslator");
+        }
+
         formats.clear();
         ConfigurationSection formatsSection = Objects.requireNonNull(
             config.getConfigurationSection("formats"),
@@ -115,5 +124,9 @@ public class SettingsConfig extends Config {
     private int hexToInt(String hex) {
         String hexString = hex.replace("#", "");
         return Integer.parseInt(hexString, 16);
+    }
+
+    public boolean isUsingTranslator() {
+        return useTranslator;
     }
 }

@@ -3,6 +3,7 @@ package ovh.unlimitedbytes.vanillamessagesformatter;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.TranslationArgument;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.translation.GlobalTranslator;
@@ -19,7 +20,7 @@ import java.util.Locale;
 public class ComponentTranslator implements Translator {
     @Override
     public @NotNull Key name() {
-        return Key.key("vanillamessagesformatter", "component_translator");
+        return Key.key("vanillamessagesformatter", "component");
     }
 
     @Override
@@ -30,20 +31,20 @@ public class ComponentTranslator implements Translator {
     @Override
     public @Nullable Component translate(@NotNull TranslatableComponent component, @NotNull Locale locale) {
         String mapping = VanillaMessagesFormatter.getInstance().getSettingsConfig().getMapping(component.key());
-        if (mapping != null) {
-            SettingsConfig.Format format = VanillaMessagesFormatter.getInstance().getSettingsConfig().getFormat(mapping);
-
-            return MiniMessage.miniMessage().deserialize(format.prefix())
-                .append(renderTranslatableComponent(
-                    component
-                        .args(colorizeArguments(component.args(), TextColor.color(format.secondaryColor())))
-                        .color(TextColor.color(format.primaryColor()))
-                ))
-                .append(MiniMessage.miniMessage().deserialize(format.suffix()))
-                .colorIfAbsent(TextColor.color(format.primaryColor()));
+        if (mapping == null) {
+            return null;
         }
 
-        return null;
+        SettingsConfig.Format format = VanillaMessagesFormatter.getInstance().getSettingsConfig().getFormat(mapping);
+
+        return MiniMessage.miniMessage().deserialize(format.prefix())
+            .append(renderTranslatableComponent(
+                component
+                    .arguments(colorizeArguments(component.arguments(), TextColor.color(format.secondaryColor())))
+                    .color(TextColor.color(format.primaryColor()))
+            ))
+            .append(MiniMessage.miniMessage().deserialize(format.suffix()))
+            .colorIfAbsent(TextColor.color(format.primaryColor()));
     }
 
     private Component renderTranslatableComponent(TranslatableComponent component) {
@@ -63,23 +64,23 @@ public class ComponentTranslator implements Translator {
 
             MessageFormat messageFormat = source.translate(component.key(), Locale.getDefault());
             if (messageFormat != null) {
-                if (component.args().isEmpty()) {
+                if (component.arguments().isEmpty()) {
                     return Component.text(messageFormat.format(null));
                 }
 
-                return Component.text(messageFormat.format(component.args()));
+                throw new UnsupportedOperationException("TranslatableComponent with arguments is not supported.");
             }
         }
 
         return component;
     }
 
-    private List<Component> colorizeArguments(List<Component> arguments, TextColor color) {
-        List<Component> colorizedArguments = new ArrayList<>();
+    private List<TranslationArgument> colorizeArguments(List<TranslationArgument> arguments, TextColor color) {
+        List<TranslationArgument> colorizedArguments = new ArrayList<>();
 
-        for (Component argument : arguments) {
+        for (TranslationArgument argument : arguments) {
             colorizedArguments.add(
-                argument.asComponent().colorIfAbsent(color)
+                TranslationArgument.component(argument.asComponent().colorIfAbsent(color))
             );
         }
 

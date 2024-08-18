@@ -2,6 +2,13 @@ name: VanillaMessagesFormatter
 version: '${version}'
 main: ovh.unlimitedbytes.vanillamessagesformatter.VanillaMessagesFormatter
 api-version: '1.20'
+softdepend:
+    - ProtocolLib
+    - ProtocolSupport
+    - ViaVersion
+    - ViaBackwards
+    - ViaRewind
+    - Geyser-Spigot
 
 commands:
     vanillamessagesformatter:

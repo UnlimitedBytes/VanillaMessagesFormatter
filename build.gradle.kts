@@ -13,16 +13,23 @@ repositories {
         name = "papermc-repo"
         url = uri("https://repo.papermc.io/repository/maven-public/")
     }
+    maven {
+        name = "codemc-repo"
+        url = uri("https://repo.codemc.org/repository/maven-public/")
+    }
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
-    implementation("com.google.code.gson:gson:2.11.0")
+    // Paper API
+    compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
+
+    // PacketEvents
+    implementation("com.github.retrooper:packetevents-spigot:2.4.0")
 }
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
@@ -35,7 +42,9 @@ tasks {
         val libNamespace = "${project.group}.${project.name}.libs"
         val relocations = mapOf(
             "org.jetbrains.annotations" to "$libNamespace.jetbrains.annotations",
-            "org.intellij.lang.annotations" to "$libNamespace.intellij.lang.annotations"
+            "org.intellij.lang.annotations" to "$libNamespace.intellij.lang.annotations",
+            "com.github.retrooper.packetevents" to "$libNamespace.packetevents.api",
+            "io.github.retrooper.packetevents" to "$libNamespace.packetevents.impl",
         )
 
         relocations.forEach { (original, relocated) ->
