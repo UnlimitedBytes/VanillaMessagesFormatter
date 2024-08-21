@@ -23,17 +23,14 @@ public class VanillaMessagesFormatterCommand implements CommandExecutor, TabComp
         @NotNull String[] args
     ) {
         if (args.length == 0) {
-            String message = "VanillaMessagesFormatter v" +
-                             VanillaMessagesFormatter.getInstance().getDescription().getVersion()
-                             +
-                             "\n"
-                             +
-                             "Usage: /vanillamessagesformatter [reload]";
+            @SuppressWarnings("deprecation") String message =
+                "VanillaMessagesFormatter v" +
+                VanillaMessagesFormatter.getInstance().getDescription().getVersion();
             this.sendMessage("info", commandSender, message);
             return true;
         }
 
-        if (args[0].equals("reload")) {
+        if (args[0].equals("reload") && commandSender.hasPermission("vanillamessagesformatter.reload")) {
             try {
                 VanillaMessagesFormatter.getInstance().reload();
             } catch (Exception exception) {
@@ -50,7 +47,7 @@ public class VanillaMessagesFormatterCommand implements CommandExecutor, TabComp
             return true;
         }
 
-        this.sendMessage("warning", commandSender, "Unknown command.");
+        this.sendMessage("error", commandSender, "Unknown command.");
         return true;
     }
 
@@ -61,7 +58,7 @@ public class VanillaMessagesFormatterCommand implements CommandExecutor, TabComp
         @NotNull String label,
         @NotNull String[] args
     ) {
-        if (args.length == 1) {
+        if (args.length == 1 && commandSender.hasPermission("vanillamessagesformatter.reload")) {
             return List.of("reload");
         }
 

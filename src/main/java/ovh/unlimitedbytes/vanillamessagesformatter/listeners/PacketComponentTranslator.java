@@ -20,13 +20,14 @@ public class PacketComponentTranslator implements PacketListener {
 
     @Override
     public void onPacketSend(PacketSendEvent event) {
-        if (event.getPacketType() != PacketType.Play.Server.SYSTEM_CHAT_MESSAGE)
+        if (event.getPacketType() != PacketType.Play.Server.SYSTEM_CHAT_MESSAGE) {
             return;
+        }
 
         WrapperPlayServerSystemChatMessage packet = new WrapperPlayServerSystemChatMessage(event);
         Component component = packet.getMessage();
 
-        if(!(component instanceof TranslatableComponent translatableComponent)) {
+        if (!(component instanceof TranslatableComponent translatableComponent)) {
             return;
         }
 
@@ -41,7 +42,10 @@ public class PacketComponentTranslator implements PacketListener {
             MiniMessage.miniMessage().deserialize(format.prefix())
                 .append(
                     translatableComponent
-                        .arguments(colorizeArguments(translatableComponent.arguments(), TextColor.color(format.secondaryColor())))
+                        .arguments(colorizeArguments(
+                            translatableComponent.arguments(),
+                            TextColor.color(format.secondaryColor())
+                        ))
                         .color(TextColor.color(format.primaryColor()))
                 )
                 .append(MiniMessage.miniMessage().deserialize(format.suffix()))

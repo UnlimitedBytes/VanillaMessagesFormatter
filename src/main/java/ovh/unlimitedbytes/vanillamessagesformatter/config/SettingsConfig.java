@@ -37,7 +37,7 @@ public class SettingsConfig extends Config {
     }
 
     private void loadFormatMessages() {
-        if(!config.contains("useTranslator")) {
+        if (!config.contains("useTranslator")) {
             VanillaMessagesFormatter.getInstance().getLogger().warning(
                 "useTranslator not found in the settings.yml file. Falling back to default value (false)."
             );

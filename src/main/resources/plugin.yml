@@ -17,4 +17,12 @@ commands:
         description: 'VanillaMessagesFormatter command'
         usage: '/vanillamessagesformatter'
         permission: 'vanillamessagesformatter.info'
-        executor: ovh.unlimitedbytes.vanillamessagesformatter.command.VanillaMessagesFormatterCommand
+
+permissions:
+    vanillamessagesformatter.info:
+        description: 'VanillaMessagesFormatter info permission'
+        default: true
+
+    vanillamessagesformatter.reload:
+        description: 'VanillaMessagesFormatter reload permission'
+        default: op
